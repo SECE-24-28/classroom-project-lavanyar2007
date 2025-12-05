@@ -1,3 +1,4 @@
+
 const questions=[
     {
         text:"Which Keyword decares a constant in JavaScript?",
@@ -16,15 +17,82 @@ const questions=[
     }
 ];
 const questionel=document.getElementById("question");
-const o1el=document.getElementById("o1");
-const o2el=document.getElementById("o2");
-const o3el=document.getElementById("o3");   
-const o4el= document.getElementById("o4");
+const optionsdivel=document.getElementById("optionsdiv");
 const pel=document.getElementById("p");
-const nextel=document.getElementById("next");
-
+const scoreel=document.getElementById("score");
+const quizdivel=document.getElementById("quizdiv");
+const scoredivel=document.getElementById("scorediv");
 var currIndex=0;
 var answered=false;
+
+const optionsbutton=[]; //array to store the buttons
+const useroptions=Array(questions.length).fill(0); //array to store the user options
+
+let score=0;
+
+loadquestion();
+
+
+function nextQuestion(){
+    currIndex++;    //increment the question index
+    if(currIndex<questions.length){
+        loadquestion();
+    }
+
+    else{
+         quizdivel.style.display="none";
+         scoredivel.style.display="block";
+
+         score=0;
+         useroptions.forEach((ans,i)=>{
+            if(ans==questions[i].correctIndex){
+                score++;
+            }
+         })
+         scoreel.innerHTML=score;    
+
+    }
+}
+
+function previousQuestion(){
+    currIndex--;
+    if(currIndex<0){
+        currIndex=0;
+        return;
+
+    }
+    loadquestion();;
+    
+}
+
+
+function loadquestion(){
+    answered=false; //reset the answer
+    //reset the color in the options
+      optionsdivel.innerHTML="";
+      optionsbutton.length=0;
+
+      pel.innerHTML=`Question ${currIndex+1} of 3`;
+
+    //update the question and options
+   
+    questionel.innerHTML=questions[currIndex].text;
+    
+    questions[currIndex].options.forEach((opt,index)=>{
+        const btn=document.createElement("button");
+        btn.innerHTML=opt;
+        btn.className="text-slate-50 flex flex-start w-[100%] mb-3 bg-slate-500 rounded-2xl p-3 hover:bg-slate-400 transistion-all duration-500";
+        btn.onclick=()=>{
+            checkanswer(index);
+        }
+        optionsdivel.appendChild(btn);
+        optionsbutton.push(btn);
+    })
+
+}
+
+
+
 
 function checkanswer(sindex){
     if(answered){
@@ -32,37 +100,14 @@ function checkanswer(sindex){
     }
     answered=true;
     const cindex=questions[currIndex].correctIndex;
+    useroptions[currIndex]=sindex;
+
     if(cindex==sindex){ 
-        document.getElementById("o"+(sindex+1)).style.backgroundColor="green"  //mark correct answer
+        optionsbutton[sindex].style.backgroundColor="green"  //mark correct answer
     }
     else{
-         document.getElementById("o"+(sindex+1)).style.backgroundColor="red"  //mark wrong answer
-         document.getElementById("o"+(cindex+1)).style.backgroundColor="green" 
+         optionsbutton[sindex].style.backgroundColor="red"  //mark wrong answer
+         optionsbutton[cindex].style.backgroundColor="green" 
     }
 }
-//move to next question
-function nextQuestion(){
-    answered=false; //reset the answer
-    currIndex++;    //increment the question index
-    if(currIndex==questions.length){
-        alert("You have completed the quiz");
-        location.href="task6.html";  //return  to  home page
-    }
-    //reset the color in the options
-    document.getElementById("o1").style.backgroundColor="";
-    document.getElementById("o2").style.backgroundColor="";
-    document.getElementById("o3").style.backgroundColor="";
-    document.getElementById("o4").style.backgroundColor="";
-
-    //update the question and options
-    pel.innerHTML=`Question ${currIndex+1} of 3`;
-    questionel.innerHTML=questions[currIndex].text;
-    o1el.innerHTML=questions[currIndex].options[0];
-    o2el.innerHTML=questions[currIndex].options[1];
-    o3el.innerHTML=questions[currIndex].options[2];
-    o4el.innerHTML=questions[currIndex].options[3];
-
-}
-
-
 
